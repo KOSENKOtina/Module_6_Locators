@@ -1,0 +1,31 @@
+{
+  "name": "Module_6_Locators",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx wdio wdio.conf.js",
+    "prettier": "npx prettier --write ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KOSENKOtina/Module_6_Locators.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KOSENKOtina/Module_6_Locators/issues"
+  },
+  "homepage": "https://github.com/KOSENKOtina/Module_6_Locators#readme",
+  "devDependencies": {
+    "@wdio/cli": "^6.12.1",
+    "@wdio/local-runner": "^6.12.1",
+    "@wdio/mocha-framework": "^6.11.0",
+    "@wdio/spec-reporter": "^6.11.0",
+    "@wdio/sync": "^6.11.0",
+    "chromedriver": "^87.0.7",
+    "wdio-chromedriver-service": "^6.0.4",
+    "prettier": "^2.2.1"
+  }
+}
