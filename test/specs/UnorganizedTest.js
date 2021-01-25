@@ -71,6 +71,7 @@ describe("Search for the first discount skincare product and check the price", (
     await goToCart.click();
     expect(await browser.getUrl()).toContain("order");
   });
+
   it("should remove insurance surcharge", () => {
     const insurance = $("#frmInsurance .checkbox__value");
     insurance.click();
