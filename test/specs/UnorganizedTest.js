@@ -38,20 +38,6 @@ describe("Search for the first discount skincare product and check the price", (
     expect(maxPrice.getValue()).toEqual("0");
   });
 
-  xit("should select only high-rated items", async () => {
-    await browser.pause(1000);
-    const highestRateCheckbox = await $('[title="Оцінка 5*"]');
-    highestRateCheckbox.scrollIntoView();
-    await highestRateCheckbox.click();
-    await highestRateCheckbox.scrollIntoView();
-    if (await (await $(".exponea-close-cross")).isDisplayed()) {
-      await (await $(".exponea-close-cross")).click();
-    }
-    expect(
-      await $('[title="Оцінка 5*"] .checkbox__input').getAttribute("checked")
-    ).toEqual("true");
-  });
-
   it("should select the first item", () => {
     const firstItem = $("li.item a");
     const firstItemUrl = firstItem.getAttribute("href");
