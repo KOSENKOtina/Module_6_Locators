@@ -1,22 +1,24 @@
+const {HomePage} = require('../../pageObjects/HomePage');
+const {DiscountPage}= require('../../pageObjects/DiscountPage');
+
+
 describe("Search for the first discount skincare product and check the price", () => {
-  before(() => {
-    browser.url("");
-    browser.pause(1000);
-    browser.maximizeWindow();
+  const HomePage = new HomePage();
+  before(async () => {
+    await HomePage.navigate();
+    await HomePage.waitLoaded();
+    await HomePage.agreeToCompliance();
   });
 
   it("should navigate to discount page", () => {
-    const discounts = $(".specials");
-    discounts.click();
-    expect(browser.getUrl()).toContain("aktsiyi");
+    HomePage.discountSection.click();
+    expect(DiscountPage.url()).toContain("aktsiyi");
   });
 
   it("should navigate to specific category", () => {
-    const closeCookies = $(".close");
-    closeCookies.click();
-    const category = $('//*[@id="param-filter"]/div[1]/div[2]/div[6]');
-    category.scrollIntoView();
-    category.click();
+    DiscountPage.category;
+    DiscountPage.category.scrollIntoView();
+    DiscountPage.category .click();
     expect($(".category-tree__item--active").getText()).toEqual(
       "Косметика для обличчя"
     );
