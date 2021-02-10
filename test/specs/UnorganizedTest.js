@@ -1,79 +1,66 @@
-const {HomePage, DiscountPage, ItemPage, CheckoutPage} = require('../../pageObjects');
+const { HomePage, DiscountPage, ItemPage, CheckoutPage } = require('../pageObjects');
 
 describe('Search for the first discount skincare product and check the price', () => {
-    let homePage, discountPage, itemPage, checkout;
-    before( () => {
-        homePage = new HomePage();
-        discountPage = new DiscountPage();
-        itemPage = new ItemPage();
-        checkout = new CheckoutPage();
-    });
-    it('should setup before test scenario',  () => {
-        homePage.navigate();
-        homePage.waitLoaded();
-        homePage.agreeToComplianceBtn.click();
-    });
+  it('should setup before test scenario', () => {
+    HomePage.navigate();
+    HomePage.waitLoaded();
+    HomePage.agreeToComplianceBtn.click();
+    HomePage.closeBanner();
+  });
 
-    it('should navigate to discount page',  () => {
-        homePage.discountSection.click();
-        discountPage.waitLoaded();
-        expect(discountPage.url).toContain('aktsiyi');
-    });
+  it('should navigate to discount page', () => {
+    HomePage.discountSection.click();
+    DiscountPage.waitLoaded();
+    expect(DiscountPage.url).toContain('aktsiyi');
+  });
 
-    it('should navigate to specific category',  () => {
-        discountPage.category;
-        discountPage.category.scrollIntoView();
-        discountPage.category.click();
-        expect(discountPage.category.getText()).toEqual('Косметика для обличчя');
-    });
+  it('should limit the Max Price', () => {
+    DiscountPage.maxPrice.scrollIntoView();
+    DiscountPage.maxPrice.click();
+    DiscountPage.setMaxPrice('500');
+    expect(DiscountPage.maxPrice.getValue()).toEqual('500');
+  });
 
-    it('should limit the Max Price',  () => {
-        discountPage.maxPrice.scrollIntoView();
-        discountPage.maxPrice.click();
-        discountPage.setMaxPrice('500');
-        expect(discountPage.maxPrice.getValue()).toEqual('500');
-    });
+  it('should limit the Min Price', () => {
+    DiscountPage.minPrice.scrollIntoView();
+    DiscountPage.minPrice.click();
+    DiscountPage.setMinPrice('0');
+    expect(DiscountPage.minPrice.getValue()).toEqual('0');
+  });
 
-    it('should limit the Min Price',  () => {
-        discountPage.minPrice.scrollIntoView();
-        discountPage.minPrice.click();
-        discountPage.setMinPrice('0');
-        expect(discountPage.minPrice.getValue()).toEqual('0');
-    });
+  it('should select only high-rated items', () => {
+    browser.pause(1000);
+    if (DiscountPage.agreeToComplianceBtn.isDisplayed()) {
+      DiscountPage.agreeToComplianceBtn.click();
+    }
+    DiscountPage.highestRank.scrollIntoView();
+    DiscountPage.highestRank.click();
+    DiscountPage.closeBanner();
+    expect(DiscountPage.highestRankInput.getAttribute('checked')).toEqual('true');
+  });
 
-    xit('should select only high-rated items',  () => {
-        browser.pause(1000);
-        discountPage.highestRank.scrollIntoView();
-        discountPage.highestRank.click();
-        //todo refactor to a class method
-        if (($('.exponea-close-cross')).isDisplayed()) {
-            ($('.exponea-close-cross')).click();
-        }
-        expect(discountPage.highestRankInput.getAttribute('checked')).toEqual('true');
-    });
+  it('should select the first item', () => {
+    const firstItemUrl = DiscountPage.firstItemOnPage.getAttribute('href');
+    browser.url(firstItemUrl);
+    expect(ItemPage.price.getText()).toBeDefined();
+  });
 
-    it('should select the first item',  () => {
-        const firstItemUrl = discountPage.firstItemOnPage.getAttribute('href');
-        browser.url(firstItemUrl);
-        expect(itemPage.price.getText()).toBeDefined();
-    });
+  it('should add an item to cart', () => {
+    ItemPage.addToCartBtn.click();
+    expect(ItemPage.addedState.getText()).toEqual('Додано до кошика');
+  });
 
-    it('should add an item to cart',  () => {
-        itemPage.addToCartBtn.click();
-        expect(itemPage.addedState.getText()).toEqual('Додано до кошика');
-    });
+  it('should navigate to CheckoutPage', () => {
+    ItemPage.checkout.click();
+    expect(browser.getUrl()).toContain('order');
+  });
 
-    it('should navigate to checkout',  () => {
-        itemPage.checkout.click();
-        expect(browser.getUrl()).toContain('order');
-    });
+  it('insurance surcharge should be present', () => {
+    expect(CheckoutPage.insuranseSurchargeCheckboxValue).toEqual('true');
+  });
 
-    it('insurance surcharge should be present',  () => {
-        expect(checkout.insuranceSurchargeCheckbox.getAttribute('checked')).toBeTruthy();
-    });
-
-    it('should subtotal equal total after removing insurance surcharge',  () => {
-        checkout.insuranceSurchargeCheckbox.click();
-        expect(checkout.subTotal.getText()).toEqual(checkout.total.getText());
-    });
+  it('should subtotal equal total after removing insurance surcharge', () => {
+    CheckoutPage.insuranceSurchargeCheckbox.click();
+    expect(CheckoutPage.subTotal.getText()).toEqual(CheckoutPage.total.getText());
+  });
 });
