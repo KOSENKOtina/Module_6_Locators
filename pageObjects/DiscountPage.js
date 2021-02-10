@@ -24,16 +24,19 @@ class DiscountPage extends BasePage{
     get highestRank(){
         return $(this._highestRankLocator);
     }
+    get highestRankInput(){
+        return $(this._highestRankLocator + " input")
+    }
     get firstItemOnPage(){
         return $(this._firstItem);
     }
 
-    setMaxPrice(price){
-        this.maxPrice.setValue(price)
+     setMaxPrice(price){
+         this.maxPrice.setValue(price)
     }
 
-    setMinPrice(price){
-        this.minPrice.setValue(price)
+     setMinPrice(price){
+         this.minPrice.setValue(price)
     }
 }
-module.exports = new DiscountPage();
+module.exports = DiscountPage;

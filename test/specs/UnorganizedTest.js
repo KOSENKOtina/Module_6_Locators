@@ -1,84 +1,79 @@
-const {HomePage} = require('../../pageObjects/HomePage');
-const {DiscountPage}= require('../../pageObjects/DiscountPage');
+const {HomePage, DiscountPage, ItemPage, CheckoutPage} = require('../../pageObjects');
 
+describe('Search for the first discount skincare product and check the price', () => {
+    let homePage, discountPage, itemPage, checkout;
+    before( () => {
+        homePage = new HomePage();
+        discountPage = new DiscountPage();
+        itemPage = new ItemPage();
+        checkout = new CheckoutPage();
+    });
+    it('should setup before test scenario',  () => {
+        homePage.navigate();
+        homePage.waitLoaded();
+        homePage.agreeToComplianceBtn.click();
+    });
 
-describe("Search for the first discount skincare product and check the price", () => {
-  const HomePage = new HomePage();
-  before(async () => {
-    await HomePage.navigate();
-    await HomePage.waitLoaded();
-    await HomePage.agreeToCompliance();
-  });
+    it('should navigate to discount page',  () => {
+        homePage.discountSection.click();
+        discountPage.waitLoaded();
+        expect(discountPage.url).toContain('aktsiyi');
+    });
 
-  it("should navigate to discount page", () => {
-    HomePage.discountSection.click();
-    expect(DiscountPage.url()).toContain("aktsiyi");
-  });
+    it('should navigate to specific category',  () => {
+        discountPage.category;
+        discountPage.category.scrollIntoView();
+        discountPage.category.click();
+        expect(discountPage.category.getText()).toEqual('Косметика для обличчя');
+    });
 
-  it("should navigate to specific category", () => {
-    DiscountPage.category;
-    DiscountPage.category.scrollIntoView();
-    DiscountPage.category .click();
-    expect($(".category-tree__item--active").getText()).toEqual(
-      "Косметика для обличчя"
-    );
-  });
+    it('should limit the Max Price',  () => {
+        discountPage.maxPrice.scrollIntoView();
+        discountPage.maxPrice.click();
+        discountPage.setMaxPrice('500');
+        expect(discountPage.maxPrice.getValue()).toEqual('500');
+    });
 
-  it("should limit the Max Price", () => {
-    const maxPrice = $(".slider-input-max");
-    maxPrice.scrollIntoView();
-    maxPrice.click();
-    maxPrice.setValue("500");
-    expect(maxPrice.getValue()).toEqual("500");
-  });
+    it('should limit the Min Price',  () => {
+        discountPage.minPrice.scrollIntoView();
+        discountPage.minPrice.click();
+        discountPage.setMinPrice('0');
+        expect(discountPage.minPrice.getValue()).toEqual('0');
+    });
 
-  it("should limit the Min Price", () => {
-    const maxPrice = $(".slider-input-min");
-    maxPrice.scrollIntoView();
-    maxPrice.click();
-    maxPrice.setValue("0");
-    expect(maxPrice.getValue()).toEqual("0");
-  });
+    xit('should select only high-rated items',  () => {
+        browser.pause(1000);
+        discountPage.highestRank.scrollIntoView();
+        discountPage.highestRank.click();
+        //todo refactor to a class method
+        if (($('.exponea-close-cross')).isDisplayed()) {
+            ($('.exponea-close-cross')).click();
+        }
+        expect(discountPage.highestRankInput.getAttribute('checked')).toEqual('true');
+    });
 
-  xit("should select only high-rated items", async () => {
-    await browser.pause(1000);
-    const highestRateCheckbox = await $('[title="Оцінка 5*"]');
-    highestRateCheckbox.scrollIntoView();
-    await highestRateCheckbox.click();
-    await highestRateCheckbox.scrollIntoView();
-    if (await (await $(".exponea-close-cross")).isDisplayed()) {
-      await (await $(".exponea-close-cross")).click();
-    }
-    expect(
-      await $('[title="Оцінка 5*"] .checkbox__input').getAttribute("checked")
-    ).toEqual("true");
-  });
+    it('should select the first item',  () => {
+        const firstItemUrl = discountPage.firstItemOnPage.getAttribute('href');
+        browser.url(firstItemUrl);
+        expect(itemPage.price.getText()).toBeDefined();
+    });
 
-  it("should select the first item", () => {
-    const firstItem = $("li.item a");
-    const firstItemUrl = firstItem.getAttribute("href");
-    browser.url(firstItemUrl);
-    expect($("#pd-price").getText()).toBeDefined();
-  });
+    it('should add an item to cart',  () => {
+        itemPage.addToCartBtn.click();
+        expect(itemPage.addedState.getText()).toEqual('Додано до кошика');
+    });
 
-  it("should add an item to cart", () => {
-    const addToCart = $("#pd-buy-button");
-    addToCart.click();
-    const added = $("//div[1]/h2/div");
-    expect(added.getText()).toEqual("Додано до кошика");
-  });
+    it('should navigate to checkout',  () => {
+        itemPage.checkout.click();
+        expect(browser.getUrl()).toContain('order');
+    });
 
-  it("should navigate to checkout", async () => {
-    const goToCart = await $('[data-cypress="goToShoppingCart"]');
-    await goToCart.click();
-    expect(await browser.getUrl()).toContain("order");
-  });
+    it('insurance surcharge should be present',  () => {
+        expect(checkout.insuranceSurchargeCheckbox.getAttribute('checked')).toBeTruthy();
+    });
 
-  it("should remove insurance surcharge", () => {
-    const insurance = $("#frmInsurance .checkbox__value");
-    insurance.click();
-    expect($(".price-subtotal div").getText()).toEqual(
-      $(".price-total .price").getText()
-    );
-  });
+    it('should subtotal equal total after removing insurance surcharge',  () => {
+        checkout.insuranceSurchargeCheckbox.click();
+        expect(checkout.subTotal.getText()).toEqual(checkout.total.getText());
+    });
 });
