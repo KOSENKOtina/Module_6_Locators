@@ -1,4 +1,4 @@
-const { HomePage } = require('../pageObjects');
+const { HomePage } = require('../pageobjects');
 
 describe('using js executor', () => {
   before(() => {

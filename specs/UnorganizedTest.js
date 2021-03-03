@@ -1,4 +1,4 @@
-const { HomePage, DiscountPage, ItemPage, CheckoutPage } = require('../pageObjects');
+const { HomePage, DiscountPage, ItemPage, CheckoutPage } = require('../pageobjects');
 
 describe('Search for the first discount skincare product and check the price', () => {
   it('should setup before test scenario', () => {
